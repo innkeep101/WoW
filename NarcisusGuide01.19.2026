@@ -1,0 +1,577 @@
+# Narcissus for WoW Machinima — Master Production Guide
+
+> **A practical in-game film studio manual for multi-character storytelling in Retail WoW**
+
+[![Addon Version](https://img.shields.io/badge/Narcissus-v1.8.3-blue)](https://www.curseforge.com/wow/addons/narcissus)
+[![WoW Version](https://img.shields.io/badge/WoW-Retail%20(TWW)-green)](https://worldofwarcraft.com)
+[![License](https://img.shields.io/badge/Guide-CC0-lightgrey)](https://creativecommons.org/publicdomain/zero/1.0/)
+
+**Your Stack:** Narcissus (staging) + DynamicCam (camera) + OBS (capture)  
+**Scope:** Retail WoW (Dragonflight / The War Within) • ToS-compliant addon workflow
+
+---
+
+## Table of Contents
+
+- [What Narcissus Does](#what-narcissus-does)
+- [1 — Setup \& Launch](#1--setup--launch)
+- [2 — Photo Mode: Core Workspace](#2--photo-mode-core-workspace)
+- [3 — Actor Management](#3--actor-management)
+- [4 — Model Manipulation](#4--model-manipulation)
+- [5 — Animation System](#5--animation-system)
+- [6 — Lighting](#6--lighting)
+- [7 — Spell Visuals \& Props](#7--spell-visuals--props)
+- [8 — Backgrounds \& Chroma Key](#8--backgrounds--chroma-key)
+- [9 — Camera Control with DynamicCam](#9--camera-control-with-dynamiccam)
+- [10 — Recording with OBS](#10--recording-with-obs)
+- [11 — Complete Production Workflow](#11--complete-production-workflow)
+- [12 — Troubleshooting](#12--troubleshooting)
+- [13 — Quick Reference](#13--quick-reference)
+- [14 — Resources](#14--resources)
+
+---
+
+## What Narcissus Does
+
+Narcissus transforms WoW into an in-game studio:
+
+| Feature | Description |
+|---------|-------------|
+| **Photo/Studio Mode** | Client-side staging environment |
+| **Multi-actor scenes** | Up to ~8 characters (players, NPCs, creatures, mounts, pets) |
+| **200+ animations** | Far beyond standard /emote commands |
+| **Lighting controls** | Direction, intensity, color, ambient |
+| **Spell visuals & props** | Auras, effects, handheld items |
+| **Chroma key & masks** | For compositing workflows |
+| **Turntable** | Rotating character showcases |
+
+> Think of it as: *Model viewer + pose controller + lighting rig + capture-ready UI* inside WoW.
+
+---
+
+## 1 — Setup & Launch
+
+### Install
+
+Install **Narcissus** via CurseForge, WowUp, or manual download.
+
+### Open Narcissus
+
+| Method | How |
+|--------|-----|
+| Minimap button | Click the Narcissus icon |
+| Slash command | `/narci` or `/narcissus` |
+| Keybind | Bind "Toggle Narcissus" in Key Bindings *(recommended)* |
+
+### UI Cleanliness
+
+| Command | Function |
+|---------|----------|
+| `Alt+Z` | Toggle entire Blizzard UI *(essential for clean recording)* |
+| `/narci resetposition` | Reset UI if stuck |
+
+> Narcissus toolbar **auto-hides** during screenshots.
+
+---
+
+## 2 — Photo Mode: Core Workspace
+
+Photo Mode creates a **local, client-side scene**. Position/lighting/animation changes exist only for your view—nothing happens server-side.
+
+### Toolbar Essentials
+
+| Button | Function |
+|--------|----------|
+| **Transmog Mode** | Display intended appearance regardless of actual gear |
+| **Hide Texts** | Remove floating names, damage numbers, chat bubbles |
+| **Top Quality** | Max graphics + anti-aliasing slider |
+| **Title Display** | Access all earned titles *(optional)* |
+
+---
+
+## 3 — Actor Management
+
+> *This is the heart of your production.*
+
+### What You Can Add as Actors
+
+| Actor Type | How to Add |
+|------------|------------|
+| **Yourself** | Auto-present in Photo Mode |
+| **Other players** | Target → Add Target |
+| **Party/raid members** | Group Photo button |
+| **In-world NPCs/creatures** | Target → Add Target |
+| **Any NPC (no targeting)** | NPC Database search |
+| **Mounts** | Journal hover + `/run Narci.SetModelByMount()` |
+| **Pets** | Journal hover + `/run Narci.SetModelByPet()` |
+| **Custom models** | `/run Narci.SetModelByFileID(ID)` or `/run Narci.SetModelByDisplayID(ID)` |
+
+> **Tip:** Hold `ALT` while clicking **Add Target** to fix visual issues (Night Warrior eyes, certain effects).
+
+---
+
+### The Alt Limitation
+
+**Problem:** You can't have multiple characters from the same WoW account logged in simultaneously.
+
+### Solution A: Anchor Account "Cast Cache" Method ⭐
+
+> *Best technique for "my own characters interact" scenes.*
+
+**Requirements:**
+- Two WoW clients (second account can be a starter/trial "anchor")
+- **Anchor Account** = Camera operator, stays logged in with Photo Mode open
+- **Main Account** = Your roster of alts, logged in one-by-one
+
+**Workflow:**
+
+```
+1. Log into Anchor at filming location
+2. Open Narcissus → Photo Mode
+3. Log Alt A on main account, travel to Anchor
+4. On Anchor: Target Alt A → Add Target
+5. Log out Alt A — actor remains cached in scene
+6. Repeat for Alt B, Alt C, etc.
+7. Stage/pose/animate everyone from Anchor client
+```
+
+**Constraints:**
+- Actors are "frozen" as they appeared at injection (gear/transmog locked)
+- Need costume change? Re-inject the actor
+- All characters must physically reach the location
+
+### Solution B: Green Screen Compositing (One Account)
+
+1. Film each character separately against chroma key background
+2. Composite in editing software (DaVinci Resolve, Premiere, etc.)
+3. Use Narcissus mask exports for clean edges
+
+### Solution C: NPC Stand-ins
+
+Use the NPC Database to find models resembling your characters.
+
+---
+
+## 4 — Model Manipulation
+
+### Controls
+
+| Control | Function | Use For |
+|---------|----------|---------|
+| **Position (X/Y/Z)** | Drag or slider input | Blocking, composition |
+| **Rotation** | Adjust facing direction | Eye-lines, dialogue framing |
+| **Scale** | Resize larger/smaller | Forced perspective, boss scenes |
+| **Depth** | Push/pull from camera | Layering foreground/background |
+| **Layer Index** | Front/back ordering | Overlap control |
+
+### Blocking Principles
+
+- **Triangle composition**: One foreground, two midground creates depth
+- **Eye-lines**: Micro-adjust rotations so characters face each other
+- **Scale tricks**: Slightly larger characters feel dominant
+- **Depth separation**: Keep actors on different planes
+
+---
+
+## 5 — Animation System
+
+Narcissus exposes WoW's internal animation library—**200+ animations** with IDs up to 1737.
+
+### Finding Animations
+
+| Method | Description |
+|--------|-------------|
+| **Animation Browser** | Built into Photo Mode UI |
+| **+/- Buttons** | Step through animation IDs (skips invalid) |
+| **Do Emote Button** | Quick access to unique emote animations |
+
+### Animation Categories
+
+| Category | Use For |
+|----------|---------|
+| Idle/breathing | Background "alive" motion |
+| Talk/gesture | Dialogue acting |
+| Sit/lean/lounge | Tavern scenes, councils |
+| Combat stances | Tension without attacks |
+| Spellcast | Magic moments |
+| Walk/run cycles | Staged movement |
+| Kneel/bow | Formal scenes, defeat |
+
+### Loop vs One-Shot
+
+| Type | Behavior | Examples |
+|------|----------|----------|
+| **Loop** | Continuous motion | Breathing, walking, gestures |
+| **One-shot** | Ends on final frame | Collapse, death, finishing moves |
+
+### Animation Sequencing
+
+```lua
+/run Narci.PlayAnimationSequenceOnModel(modelIndex, animID1, animID2, animID3)
+```
+
+> `modelIndex` starts at 1. Example: Animation ID **1262** = "Lean" poses.
+
+### Turntable
+
+```lua
+/run Narci.SpinModel()
+```
+
+> ⚠️ **Warning:** Avoid combining animation sequences with Turntable — can crash client.
+
+---
+
+## 6 — Lighting
+
+> *Lighting is what makes shots stop looking like "addon screenshots."*
+
+### Core Controls
+
+| Light Type | Parameters | Function |
+|------------|------------|----------|
+| **Directional** | Angle, intensity, color | Main "sun/key" light |
+| **Ambient** | Intensity, color | Shadow fill, overall mood |
+
+### Practical Workflow
+
+1. **Read the environment**: Where are shadows falling?
+2. **Match directional light** to environment angle
+3. **Adjust intensity** for natural highlights/shadows
+4. **Tint light color** to match location:
+
+| Location Type | Color Temperature |
+|---------------|-------------------|
+| Sunset, torches, Firelands | Warm orange/yellow |
+| Moonlight, Icecrown | Cool blue |
+| Fel zones, Outland | Green |
+| Void, Old Gods | Purple |
+| Neutral daylight | Slight warm white |
+
+### Rim Light Trick
+
+- Add subtle backlight to separate characters from dark backgrounds
+- Makes silhouettes readable
+- Instantly "feels cinematic"
+
+---
+
+## 7 — Spell Visuals & Props
+
+### Spell Visuals
+
+| Effect Type | Use For |
+|-------------|---------|
+| Holy/divine auras | Paladin/priest scenes |
+| Arcane sparks | Mage moments |
+| Shadow tendrils | Warlock/void scenes |
+| Lightning | Shaman, dramatic moments |
+| Fire/frost | Elemental magic |
+
+### Props & Accessories
+
+- Backpacks, quivers, traveler gear
+- Books, scrolls, lanterns
+- Hearthstones, Azerite necklaces
+- Holy crowns, wings
+
+> **Directing tip:** Give characters something to do with their hands. Props + gestures = believable dialogue.
+
+---
+
+## 8 — Backgrounds & Chroma Key
+
+### Background Modes
+
+| Mode | Use For |
+|------|---------|
+| **Live world** | In-location filming |
+| **Solid color** | Chroma key compositing |
+| **Image** | Custom backgrounds *(if supported)* |
+
+### Chroma Key Colors
+
+```lua
+/run Narci.SetChromaKeyColor(0, 255, 0)    -- Green screen
+/run Narci.SetChromaKeyColor(0, 0, 255)    -- Blue screen
+```
+
+### Export Options
+
+| Export | Function |
+|--------|----------|
+| **Green screen** | Character against solid color |
+| **Silhouette** | Solid shape cutouts |
+| **Layer masks** | Alpha channel for compositing |
+
+---
+
+## 9 — Camera Control with DynamicCam
+
+### DynamicCam Features
+
+| Feature | Function |
+|---------|----------|
+| **Shoulder Offset** | Over-shoulder framing for dialogue |
+| **Pitch/Zoom per Situation** | Auto-adjust based on context |
+| **Target Focus** | Camera follows target smoothly |
+| **Smooth transitions** | Blend between camera states |
+
+> Access via `/dynamiccam` or `/dc`
+
+### Manual Camera Controls
+
+**Smooth panning:**
+
+```lua
+/script MoveViewRightStart(0.15)   -- Slow pan right
+/script MoveViewLeftStart(0.15)    -- Slow pan left
+/script MoveViewRightStop()        -- Stop movement
+```
+
+**Camera flip:**
+
+```lua
+/script FlipCameraYaw(180)
+```
+
+### Console Commands
+
+```
+/console cameraDistanceMaxZoomFactor 4    -- Extend max zoom
+/console showplayer 0                     -- Hide your character
+/console showplayer 1                     -- Show your character
+/console ActionCam full                   -- Enable ActionCam
+/console ActionCam off                    -- Disable ActionCam
+```
+
+### DynamicCam + Narcissus Conflict
+
+If camera behaves strangely:
+1. Disable DynamicCam situations temporarily
+2. Use manual controls during Photo Mode
+3. Re-enable for in-world cinematic shots
+
+---
+
+## 10 — Recording with OBS
+
+### OBS Settings
+
+| Setting | Recommendation |
+|---------|----------------|
+| **Capture Mode** | Game Capture *(not Window Capture)* |
+| **Encoder** | NVENC (NVIDIA) or AMF (AMD) |
+| **Bitrate** | 4500+ for quality, 6000+ for 1440p/4K |
+| **Resolution** | Match WoW resolution |
+| **Framerate** | 60fps smooth, 30fps acceptable |
+
+### Recording Workflow
+
+```
+1. Stage scene in Narcissus Photo Mode
+2. Hide UI with Alt+Z
+3. Start OBS recording
+4. Perform the shot
+5. Stop recording
+6. Review immediately
+```
+
+### Tips
+
+- **Record more than you need**
+- **Keep takes short** while experimenting
+- **Label takes clearly**: `Scene3_TakeA_Wide.mp4`
+
+### Screenshot Quality
+
+```
+/console screenshotQuality 10
+/console screenshotFormat tga
+```
+
+---
+
+## 11 — Complete Production Workflow
+
+### Pre-Production
+
+1. Script your scene: Who's in it? What happens?
+2. Scout location in-game
+3. Plan your cast (characters + NPC stand-ins)
+4. Prepare transmogs
+
+### Production Checklist
+
+```
+[ ] Anchor logged in at location (if using Cast Cache)
+[ ] Photo Mode active and stable
+[ ] All actors injected and cached
+[ ] Positions blocked (triangle composition)
+[ ] Rotations set (eye-lines correct)
+[ ] Animations assigned and looping
+[ ] Lighting matched to environment
+[ ] Spell visuals added (if any)
+[ ] UI hidden (Alt+Z)
+[ ] OBS recording started
+[ ] Shot performed
+[ ] Recording stopped and reviewed
+```
+
+### Shot Types
+
+| Shot | Description | Use For |
+|------|-------------|---------|
+| **Wide/Establishing** | Full scene, all characters | Opening, location context |
+| **Medium** | Waist-up, 1-2 characters | Dialogue, interaction |
+| **Close-up** | Face/upper body | Emotion, reaction |
+| **Over-shoulder** | Behind one, facing another | Dialogue exchange |
+| **Pan** | Slow horizontal movement | Reveals, tension |
+| **Static hold** | Locked camera | Let animation breathe |
+
+---
+
+## 12 — Troubleshooting
+
+### Common Issues
+
+| Problem | Solution |
+|---------|----------|
+| Actor disappears after logout | Re-inject; cache didn't hold |
+| Animation won't play | Try different ID; not all exist for every model |
+| Lighting looks wrong | Reset and rebuild; match to environment |
+| Camera stuck | Exit Photo Mode, reset camera views |
+| Turntable crashes | Don't combine with animation sequences |
+| UI elements stuck | `/narci resetposition` |
+
+### Stability Rules
+
+1. **Weird behavior?** Exit Photo Mode and re-enter
+2. **Build in layers:** Actors → Positions → Rotations → Animations → Lighting → Visuals → Record
+3. **Test experimental features** on throwaway sessions
+4. **Save shot plans** in notes for quick rebuild after crashes
+
+### Reset Commands
+
+```
+/narci resetposition
+/script ResetView(2); ResetView(5)
+/reload
+```
+
+---
+
+## 13 — Quick Reference
+
+### Essential Commands
+
+```
+/narci                                    -- Open Narcissus
+Alt+Z                                     -- Toggle WoW UI
+/console showplayer 0                     -- Hide player
+/console showplayer 1                     -- Show player
+/console cameraDistanceMaxZoomFactor 4    -- Max zoom out
+/console screenshotQuality 10             -- Max screenshot quality
+```
+
+### Model Loading
+
+```lua
+/run Narci.SetModelByMount()              -- Load hovered mount
+/run Narci.SetModelByPet()                -- Load hovered pet
+/run Narci.SetModelByFileID(123456)       -- Load by FileID
+/run Narci.SetModelByDisplayID(123456)    -- Load by DisplayID
+/run Narci.SpinModel()                    -- Start turntable
+```
+
+### Camera Pans
+
+```lua
+/script MoveViewRightStart(0.15)          -- Pan right (slow)
+/script MoveViewLeftStart(0.15)           -- Pan left (slow)
+/script MoveViewRightStop()               -- Stop pan
+/script FlipCameraYaw(180)                -- Flip camera
+```
+
+### Chroma Key
+
+```lua
+/run Narci.SetChromaKeyColor(0, 255, 0)   -- Green screen
+/run Narci.SetChromaKeyColor(0, 0, 255)   -- Blue screen
+```
+
+---
+
+## 14 — Resources
+
+### Official
+
+| Resource | Link |
+|----------|------|
+| CurseForge | [curseforge.com/wow/addons/narcissus](https://www.curseforge.com/wow/addons/narcissus) |
+| GitHub | [github.com/Peterodox/Narcissus](https://github.com/Peterodox/Narcissus) |
+| Developer | [@Peterdox](https://twitter.com/Peterdox) |
+
+### Visual Guides
+
+| Guide | Link |
+|-------|------|
+| Tenasa's Basic Guide | [imgur.com/a/ISxYG8B](https://imgur.com/a/ISxYG8B) |
+| Tenasa's Extras | [imgur.com/a/lIUc6VU](https://imgur.com/a/lIUc6VU) |
+| Shadowlands Update | [imgur.com/a/kcpZIrK](https://imgur.com/a/kcpZIrK) |
+
+### Companion Addons
+
+| Addon | Purpose |
+|-------|---------|
+| **DynamicCam** | Cinematic camera automation |
+| **MrGM's Camera Tools** | Manual camera sliders |
+| **Total RP 3** | Character profiles, dialogue |
+| **Cross RP** | Cross-faction filming |
+| **MogIt** | Transmog planning |
+
+---
+
+## Anchor Account Cast Cache Checklist
+
+> *Copy this for every multi-alt filming session:*
+
+```
+[ ] Anchor logged in at filming location
+[ ] Narcissus Photo Mode active
+[ ] Alt A arrives → Target → Add Target → logs out
+[ ] Alt B arrives → Target → Add Target → logs out
+[ ] (Repeat for all alts)
+[ ] Verify all actors still cached
+[ ] Wardrobe correct? Re-inject if needed
+[ ] Block positions
+[ ] Set animations
+[ ] Set lighting
+[ ] Record takes
+```
+
+---
+
+## First Scene Starter
+
+> *Test your setup tonight:*
+
+1. **Location:** Quiet spot (tavern, hilltop)
+2. **Actors:** Yourself + one NPC from database
+3. **Block:** Triangle — you foreground left, NPC midground right
+4. **Rotate:** Face each other
+5. **Animate:** "Talk" loop on you, "idle" on NPC
+6. **Light:** Match to environment shadows
+7. **Record:**
+   - 10s static wide
+   - 10s slow pan
+   - 10s close-up
+8. **Review:** What looked good? What felt "gamey"?
+9. **Iterate**
+
+---
+
+<p align="center">
+<i>Guide compiled from Narcissus documentation, community workflows, and machinima creator techniques.</i><br>
+<b>Last updated:</b> January 2026
+</p>
